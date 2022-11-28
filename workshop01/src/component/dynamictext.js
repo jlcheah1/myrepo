@@ -18,7 +18,7 @@ class DynamicText extends Component {
     }
 
 
-    getRandom() {
+    /*getRandom() {
         var weights = [0.25, 0.25, 0.25, 0.25, 0.25]; // probabilities
 
         var num = Math.random(),
@@ -42,7 +42,37 @@ class DynamicText extends Component {
 
     equalProbability() {
         return [...Array(this.state.value.length).keys()].sort(() => 0.5 - Math.random())[0];
+    }*/
+
+    getRandomWithEqualProbability() {
+        const value = this.state.value;
+        const weight = [0.25, 0.25, 0.25, 0.25, 0.25];
+        const distribution = this.generateDistribution(weight, 25); //distribution array size which affect precision
+        return this.getRandom(value, distribution);
     }
+
+    generateDistribution = (weights, size) => {
+        const distribution = [];
+        const sum = weights.reduce((a, b) => a + b);
+        const quant = size / sum;
+            for (let i = 0; i < weights.length; ++i) {
+                const limit = quant * weights[i];
+            for (let j = 0; j < limit; ++j) {
+                distribution.push(i);
+            }
+        }
+        return distribution;
+    };
+
+    getIndex = (distribution) => {
+        const index = Math.floor(distribution.length * Math.random());
+        return distribution[index];  
+    };
+
+    getRandom = (array, distribution) => {
+        const index = this.getIndex(distribution);
+        return array[index];
+    };
 
     render() {
         return (
@@ -52,7 +82,7 @@ class DynamicText extends Component {
                         <img src={loadimage} width="80px" alt="Sun" />
                     </Grid>
                     <Grid item xs={12}>
-                        <h2>{this.getRandomProbability()}</h2>
+                        <h2>{this.getRandomWithEqualProbability()}</h2>
                     </Grid>
                 </Grid>
             </Typography>
